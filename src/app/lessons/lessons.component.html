@@ -1,0 +1,52 @@
+<form [formGroup]="lessonForm">
+    <table>
+        <tr>
+            <th>Номер</th>
+            <th>Дата урока</th>
+            <th>Тема урока</th>
+            <th>Домашнее задание</th>
+            <th>Примечание</th>
+            <th>Действие</th>
+        </tr>
+
+        <tr *ngFor="let number of numbers.controls; let i=index;">
+            <td>
+                {{ number.value }}
+            </td>
+            <td>
+                <input type="date" value = "{{ dates.get(i.toString()).value | date: 'yyyy-MM-dd'}}">
+            </td>
+            <td formArrayName="themes">
+                <input type="text" [formControlName] = "i" class = "big">
+            </td>
+            <td formArrayName="homeworks">
+                <input type="text" [formControlName] = "i" class = "big">
+            </td>
+            <td formArrayName="notes">
+                <input type="text" [formControlName] = "i" class = "big">
+            </td>
+            <td> <button type="button" (click)="deleteLesson(i)">Удалить запись</button> </td>
+        </tr>
+        <tr>
+            <td></td>
+            <td><input #date type="date"></td>
+            <td><input #theme type="text" class = "big"></td>
+            <td><input #hw type="text" class = "big"></td>
+            <td><input #note type="text" class = "big">
+            </td>
+            <td>
+                <button type="button" 
+                    (click) = "addLesson(
+                    date.value,
+                    theme.value,
+                    hw.value,
+                    note.value);
+                    date.value = '';
+                    theme.value = '';
+                    hw.value = '';
+                    note.value = '';">Добавить запись</button>
+            </td>
+        </tr>
+
+    </table>
+</form>

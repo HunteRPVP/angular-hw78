@@ -1,0 +1,55 @@
+{
+    "students": [
+        {
+            "fio": "Потапов Вадим Павлович",
+            "ratings": [
+            	{
+            		"lesson_num": 1,
+            		"rating": 4
+            	},
+            	{
+            		"lesson_num": 2,
+            		"rating": 3
+            	},
+            	{
+            		"lesson_num": 3,
+            		"rating": 5
+            	}
+            ]
+        },
+        {
+            "fio": "Носова Виктория Алексеевна",
+            "ratings": [
+            	{
+            		"lesson_num": 1,
+            		"rating": 5
+            	},
+            	{
+            		"lesson_num": 2,
+            		"rating": 5
+            	},
+            	{
+            		"lesson_num": 3,
+            		"rating": 5
+            	}
+            ]
+        },
+        {
+            "fio": "Иванов Иван Иванович",
+            "ratings": [
+            	{
+            		"lesson_num": 1,
+            		"rating": 3
+            	},
+            	{
+            		"lesson_num": 2,
+            		"rating": 1
+            	},
+            	{
+            		"lesson_num": 3,
+            		"rating": 2
+            	}
+            ]
+        }
+    ]
+}
