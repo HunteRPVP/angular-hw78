@@ -1,0 +1,23 @@
+<form [formGroup]="studentForm">
+    <table>
+        <tr>
+            <th>ФИО ученика</th>
+            <th>Действие</th>
+        </tr>
+
+        <tr *ngFor="let student of students.controls; let i=index;">
+            <td formArrayName="students">
+                <input type="text" [formControlName] = "i">
+            </td>
+            <td> <button type="button" (click)="deleteStudent(i)">Удалить запись</button> </td>
+        </tr>
+        <tr>
+            <td><input #fio type="text"></td>
+            <td>
+                <button type="button" 
+                    (click) = "addStudent(fio.value); fio.value = '';">Добавить запись</button>
+            </td>
+        </tr>
+
+    </table>
+</form>
