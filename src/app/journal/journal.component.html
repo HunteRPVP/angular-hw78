@@ -16,7 +16,7 @@
       {{ fio.value }}
     </td>
     <td *ngFor="let rating of ratings.controls[i].value.ratings; let j = index">
-        <select value= "{{ rating.rating }}">
+        <select #changedValue value= "{{ rating.rating }}" (change) = "changeRating(i, j, changedValue.value)">
             <option value=1>1</option>
             <option value=2>2</option>
             <option value=3>3</option>

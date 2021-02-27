@@ -60,6 +60,12 @@ export class JournalComponent implements OnInit {
     return Math.round(ratingsTemp.reduce((a,b) => a + b, 0) / ratingsTemp.length);
   }
 
+  changeRating(i: number, j: number, changedRating: string): void {
+    ratings.students[i].ratings[j].rating = parseInt(changedRating);
+    this.avgRounds.value[i] = this.AvgRound(i);
+    this.avgRoundInts.value[i] = this.AvgRoundInt(i);
+  }
+
   get fios(): FormArray {
     return this.journalForm.get('fios') as FormArray;
   }
