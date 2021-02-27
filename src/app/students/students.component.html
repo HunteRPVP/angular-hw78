@@ -7,7 +7,7 @@
 
         <tr *ngFor="let student of students.controls; let i=index;">
             <td formArrayName="students">
-                <input type="text" [formControlName] = "i">
+                <input type="text" [formControlName] = "i" (change)="changeEmit(i)" >
             </td>
             <td> <button type="button" (click)="deleteStudent(i)">Удалить запись</button> </td>
         </tr>

@@ -1,1 +1,34 @@
-<p>journal works!</p>
+<table [formGroup]="journalForm">
+  <tr>
+    <th rowspan="2">ФИО обучающегося</th>
+    <th [attr.colSpan]="lessonNumbers.controls.length">Оценки</th>
+    <th rowspan="2">Cредний балл округление до 2-го разряда</th>
+    <th rowspan="2">Округлённый средний балл до целого</th>
+  </tr>
+  <tr>
+    <th *ngFor="let lessonTheme of lessonThemes.controls; let i = index">
+      {{ lessonDates.controls[i].value | date: "dd.MM.yyyy" }}
+      {{ lessonTheme.value }}
+    </th>
+  </tr>
+  <tr *ngFor="let fio of fios.controls; let i = index">
+    <td>
+      {{ fio.value }}
+    </td>
+    <td *ngFor="let rating of ratings.controls[i].value.ratings; let j = index">
+        <select value= "{{ rating.rating }}">
+            <option value=1>1</option>
+            <option value=2>2</option>
+            <option value=3>3</option>
+            <option value=4>4</option>
+            <option value=5>5</option>
+        </select>
+    </td>
+    <td>
+        {{ this.avgRounds.value[i] | number: "1.2"}}
+    </td>
+    <td>
+        {{ this.avgRoundInts.value[i] | number: "1.0" }}
+    </td>
+  </tr>
+</table>

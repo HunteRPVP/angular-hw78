@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 
 import * as ratings from '../../assets/ratings.json';
@@ -11,6 +11,9 @@ import * as ratings from '../../assets/ratings.json';
 export class StudentsComponent implements OnInit {
 
   studentForm: FormGroup;
+
+  @Output()
+  change: EventEmitter<string> = new EventEmitter();
 
   fioArray: string[] = [];
 
@@ -37,6 +40,10 @@ export class StudentsComponent implements OnInit {
 
   addStudent(fio: string): void {
     this.students.push(this.fb.control([fio]));
+  }
+
+  changeEmit(i: number) {
+    this.change.emit(this.students.controls[i.toString()].value);
   }
 
 }
