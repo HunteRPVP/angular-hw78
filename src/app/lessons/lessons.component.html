@@ -14,16 +14,16 @@
                 {{ number.value }}
             </td>
             <td>
-                <input type="date" value = "{{ dates.get(i.toString()).value | date: 'yyyy-MM-dd'}}">
+                <input #dateExist type="date" name="date" value = "{{ dates.get(i.toString()).value | date: 'yyyy-MM-dd'}}" (change) = "changeField(dateExist.name, i, dateExist.value)">
             </td>
             <td formArrayName="themes">
-                <input type="text" [formControlName] = "i" class = "big">
+                <input #themeExist type="text" name="theme" [formControlName] = "i" class = "big" (change) = "changeField(themeExist.name, i, themeExist.value)">
             </td>
             <td formArrayName="homeworks">
-                <input type="text" [formControlName] = "i" class = "big">
+                <input type="text" name="hw" [formControlName] = "i" class = "big">
             </td>
             <td formArrayName="notes">
-                <input type="text" [formControlName] = "i" class = "big">
+                <input type="text" name="note" [formControlName] = "i" class = "big">
             </td>
             <td> <button type="button" (click)="deleteLesson(i)">Удалить запись</button> </td>
         </tr>

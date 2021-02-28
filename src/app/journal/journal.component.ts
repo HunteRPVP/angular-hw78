@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnInit, Output } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
+import { ɵEmptyOutletComponent } from '@angular/router';
 
 import * as lessons from '../../assets/lessons.json';
 import * as ratings from '../../assets/ratings.json';
@@ -9,9 +10,30 @@ import * as ratings from '../../assets/ratings.json';
   templateUrl: './journal.component.html',
   styleUrls: ['./journal.component.css']
 })
-export class JournalComponent implements OnInit {
+export class JournalComponent implements OnInit, OnChanges {
 
   journalForm: FormGroup;
+
+  @Input()
+  deleteIndex: number;
+
+  @Input()
+  deleteLessonIndex: number;
+
+  @Output()
+  delete: EventEmitter<number> = new EventEmitter();
+
+  @Input()
+  changeArr;
+
+  @Input()
+  changeFieldArr;
+
+  @Input()
+  addFIO: string;
+
+  @Input()
+  addLessonArr: string;
 
   fioArray: string[] = [];
   lessonNumbersArr: number[] = [];
@@ -44,24 +66,111 @@ export class JournalComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  ngOnChanges(): void {
+    if (this.deleteIndex != undefined) {
+      this.fios.removeAt(this.deleteIndex);
+      this.ratings.removeAt(this.deleteIndex);
+      this.avgRounds.removeAt(this.deleteIndex);
+      this.avgRoundInts.removeAt(this.deleteIndex);
+      this.deleteIndex = undefined;
+      this.delete.emit();
+    }
+    else if (this.changeArr != undefined && this.changeArr[1]) {
+      this.fios.controls[this.changeArr[0]].setValue(this.changeArr[1]);
+      this.changeArr = undefined;
+    }
+    else if (this.addFIO != undefined) {
+      this.fios.push(this.fb.control(this.addFIO));
+      this.ratings.push(this.fb.control(
+        {
+          "fio": this.addFIO,
+          "ratings": []
+        }
+      ));
+      for (var i = 0; i < this.ratings.controls[0].value.ratings.length; i++) {
+        console.log(this.ratings.controls);
+        this.ratings.controls[this.ratings.controls.length - 1].value.ratings.push( 
+          {
+            "lesson_num": i + 1,
+            "rating": 1
+          } 
+        );
+      }
+      this.avgRounds.push(this.fb.control(this.AvgRound(i)));
+      this.avgRoundInts.push(this.fb.control(this.AvgRoundInt(i)));
+      this.addFIO = undefined;
+    }
+    else if (this.addLessonArr != undefined) {
+      console.log(this.lessonNumbers.controls.length);
+      this.lessonNumbers.push(this.fb.control(this.lessonNumbers.controls.length + 1));
+      this.lessonDates.push(this.fb.control(this.addLessonArr[0]));
+      this.lessonThemes.push(this.fb.control(this.addLessonArr[1]));
+      for (var i = 0; i < this.ratings.controls.length; i++) {
+        this.ratings.controls[i].value.ratings.push( 
+          {
+            "lesson_num": this.lessonNumbers.controls.length + 1,
+            "rating": 1
+          } 
+        );
+        this.avgRounds.value[i] = this.AvgRound(i);
+        this.avgRoundInts.value[i] = this.AvgRoundInt(i);
+      }
+      this.addLessonArr = undefined;
+    }
+    else if (this.deleteLessonIndex != undefined) {
+      this.lessonNumbers.removeAt(this.deleteLessonIndex);
+      this.lessonDates.removeAt(this.deleteLessonIndex);
+      this.lessonThemes.removeAt(this.deleteLessonIndex);
+      for (var i = 0; i < this.ratings.controls.length; i++) {
+        this.ratings.controls[i].value.ratings.splice(this.deleteLessonIndex, 1);
+        this.avgRounds.value[i] = this.AvgRound(i);
+        this.avgRoundInts.value[i] = this.AvgRoundInt(i);
+      }
+      this.deleteLessonIndex = undefined;
+      this.delete.emit();
+    }
+    else if (this.changeFieldArr != undefined) {
+      if(this.changeFieldArr[0] == "date") {
+        this.lessonDates.controls[this.changeFieldArr[1]].setValue(this.changeFieldArr[2]);
+      }
+      else if (this.changeFieldArr[0] == "theme") {
+        this.lessonThemes.controls[this.changeFieldArr[1]].setValue(this.changeFieldArr[2]);
+      }
+    }
+  }
+
   AvgRound(index: number): number {
     var ratingsTemp = [];
-    for (var i = 0; i < ratings.students[index].ratings.length; i++) {
-      ratingsTemp.push(ratings.students[index].ratings[i].rating);
+    if ( this.journalForm == undefined ) {
+      for (var i = 0; i < ratings.students[index].ratings.length; i++) {
+        ratingsTemp.push(ratings.students[index].ratings[i].rating);
+      }
+    }
+    else {
+      for (var i = 0; i < this.ratings.controls[index].value.ratings.length; i++) {
+        ratingsTemp.push(this.ratings.controls[index].value.ratings[i].rating);
+      }
     }
     return Math.round((ratingsTemp.reduce((a,b) => a + b, 0) / ratingsTemp.length) * 100) / 100;
   }
 
   AvgRoundInt(index: number): number {
     var ratingsTemp = [];
-    for (var i = 0; i < ratings.students[index].ratings.length; i++) {
-      ratingsTemp.push(ratings.students[index].ratings[i].rating);
+    if ( this.journalForm == undefined ) {
+      for (var i = 0; i < ratings.students[index].ratings.length; i++) {
+        ratingsTemp.push(ratings.students[index].ratings[i].rating);
+      }
+    }
+    else {
+      for (var i = 0; i < this.ratings.controls[index].value.ratings.length; i++) {
+        ratingsTemp.push(this.ratings.controls[index].value.ratings[i].rating);
+      }
     }
     return Math.round(ratingsTemp.reduce((a,b) => a + b, 0) / ratingsTemp.length);
   }
 
   changeRating(i: number, j: number, changedRating: string): void {
-    ratings.students[i].ratings[j].rating = parseInt(changedRating);
+    this.ratings.controls[i].value.ratings[j].rating = parseInt(changedRating);
     this.avgRounds.value[i] = this.AvgRound(i);
     this.avgRoundInts.value[i] = this.AvgRoundInt(i);
   }

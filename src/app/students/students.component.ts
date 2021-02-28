@@ -13,7 +13,13 @@ export class StudentsComponent implements OnInit {
   studentForm: FormGroup;
 
   @Output()
-  change: EventEmitter<string> = new EventEmitter();
+  change: EventEmitter<any> = new EventEmitter();
+
+  @Output()
+  delete: EventEmitter<number> = new EventEmitter();
+
+  @Output()
+  add: EventEmitter<string> = new EventEmitter();
 
   fioArray: string[] = [];
 
@@ -36,14 +42,16 @@ export class StudentsComponent implements OnInit {
 
   deleteStudent(i: number): void {
     this.students.removeAt(i);
+    this.delete.emit(i);
   }
 
   addStudent(fio: string): void {
     this.students.push(this.fb.control([fio]));
+    this.add.emit(fio);
   }
 
   changeEmit(i: number) {
-    this.change.emit(this.students.controls[i.toString()].value);
+    this.change.emit([i, this.students.controls[i.toString()].value]);
   }
 
 }

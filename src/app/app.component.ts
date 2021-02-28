@@ -1,5 +1,5 @@
+import { ThrowStmt } from '@angular/compiler';
 import { Component } from '@angular/core';
-import { FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-root',
@@ -9,7 +9,39 @@ import { FormGroup } from '@angular/forms';
 export class AppComponent {
   title = 'angular-hw78';
 
-  changeFIO(fio: string): void {
-    console.log(fio);
+  changeArr;
+  changeFieldArr;
+  deleteIndex: number;
+  deleteLessonIndex: number;
+  addFIO: string;
+  addLessonArr: string;
+
+  changeFIO(changeArr: any): void {
+    this.changeArr = changeArr;
+  }
+
+  changeField(changeFieldArr: any): void {
+    this.changeFieldArr = changeFieldArr;
+  }
+
+  deleteStudent(i: number): void {
+    this.deleteIndex = i;
+  }
+
+  deleteLesson(i: number): void {
+    this.deleteLessonIndex = i;
+  }
+
+  addStudent(fio: string): void {
+    this.addFIO = fio;
+  }
+
+  addLesson(addLessonArr: any): void {
+    this.addLessonArr = addLessonArr;
+  }
+
+  returnToDefault(): void {
+    setTimeout(() => this.deleteIndex = undefined);
+    setTimeout(() => this.deleteLessonIndex = undefined);
   }
 }

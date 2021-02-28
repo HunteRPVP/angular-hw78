@@ -1,5 +1,21 @@
-<app-lessons></app-lessons>
-<hr>
-<app-students (change) = "changeFIO($event.toString())"></app-students>
-<hr>
-<app-journal></app-journal>
+<app-lessons
+  (delete)="deleteLesson($event)"
+  (change)="changeField($event)"
+  (add)="addLesson($event)"
+></app-lessons>
+<hr />
+<app-students
+  (change)="changeFIO($event)"
+  (delete)="deleteStudent($event)"
+  (add)="addStudent($event)"
+></app-students>
+<hr />
+<app-journal
+  [deleteIndex]="deleteIndex"
+  [deleteLessonIndex]="deleteLessonIndex"
+  (delete)="returnToDefault()"
+  [changeArr]="changeArr"
+  [changeFieldArr]="changeFieldArr"
+  [addFIO]="addFIO"
+  [addLessonArr]="addLessonArr"
+></app-journal>

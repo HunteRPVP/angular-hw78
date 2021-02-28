@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import * as lessons from '../../assets/lessons.json';
@@ -9,6 +9,15 @@ import * as lessons from '../../assets/lessons.json';
   styleUrls: ['./lessons.component.css']
 })
 export class LessonsComponent implements OnInit {
+
+  @Output()
+  delete: EventEmitter<number> = new EventEmitter();
+
+  @Output()
+  change: EventEmitter<any> = new EventEmitter();
+
+  @Output()
+  add: EventEmitter<any> = new EventEmitter();
 
   lessonForm: FormGroup;
 
@@ -69,6 +78,7 @@ export class LessonsComponent implements OnInit {
     for(var j = this.numbers.length - 1; j >= i; j--) {
       this.numbers.get(j.toString()).setValue(j + 1);
     }
+    this.delete.emit(i);
   }
 
   addLesson(date: string, theme: string, hw: string, note: string): void {
@@ -78,6 +88,11 @@ export class LessonsComponent implements OnInit {
     this.themes.push(this.fb.control([theme]));
     this.homeworks.push(this.fb.control([hw]));
     this.notes.push(this.fb.control([note]));
+    this.add.emit([date, theme]);
+  }
+
+  changeField(type, i: number, value) {
+    this.change.emit([type, i, value]);
   }
 
 }
