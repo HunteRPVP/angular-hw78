@@ -1,5 +1,6 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormArray, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { CustomValidators } from 'ng2-validation';
 
 import * as lessons from '../../assets/lessons.json';
 
@@ -9,6 +10,8 @@ import * as lessons from '../../assets/lessons.json';
   styleUrls: ['./lessons.component.css']
 })
 export class LessonsComponent implements OnInit {
+
+  minDate = new Date();
 
   @Output()
   delete: EventEmitter<number> = new EventEmitter();
@@ -22,7 +25,7 @@ export class LessonsComponent implements OnInit {
   lessonForm: FormGroup;
 
   numberArr: number[] = [];
-  dateArr: Date[] = [];
+  dateArr: string[] = [];
   themeArr: string[] = [];
   homeworkArr: string[] = [];
   noteArr: string[] = [];
@@ -31,7 +34,7 @@ export class LessonsComponent implements OnInit {
 
     for (var i = 0; i < lessons.lessons.length; i++) {
       this.numberArr.push(lessons.lessons[i].number);
-      this.dateArr.push(new Date (lessons.lessons[i].date));
+      this.dateArr.push(new Date (lessons.lessons[i].date).toString());
       this.themeArr.push(lessons.lessons[i].theme);
       this.homeworkArr.push(lessons.lessons[i].homework);
       this.noteArr.push(lessons.lessons[i].note);
@@ -44,6 +47,15 @@ export class LessonsComponent implements OnInit {
       homeworks: fb.array(this.homeworkArr),
       notes: fb.array(this.noteArr)
     });
+
+    for (var i = 0; i < lessons.lessons.length; i++) {
+      this.numbers.controls[i].setValidators([Validators.required, Validators.min(1)]);
+      this.dates.controls[i].setValidators(Validators.required);
+      this.themes.controls[i].setValidators(Validators.required);
+      this.homeworks.controls[i].setValidators(Validators.required);
+      this.notes.controls[i].setValidators(Validators.required);
+    }
+
   }
 
   ngOnInit(): void {
@@ -75,20 +87,17 @@ export class LessonsComponent implements OnInit {
     this.themes.removeAt(i);
     this.homeworks.removeAt(i);
     this.notes.removeAt(i);
-    for(var j = this.numbers.length - 1; j >= i; j--) {
-      this.numbers.get(j.toString()).setValue(j + 1);
-    }
     this.delete.emit(i);
+    console.log(this.dates);
   }
 
-  addLesson(date: string, theme: string, hw: string, note: string): void {
-    date = date + 'T09:00:00';
-    this.numbers.push(this.fb.control([this.numbers.length + 1]));
-    this.dates.push(this.fb.control([date]));
-    this.themes.push(this.fb.control([theme]));
-    this.homeworks.push(this.fb.control([hw]));
-    this.notes.push(this.fb.control([note]));
-    this.add.emit([date, theme]);
+  addLesson(): void {
+    this.numbers.push(this.fb.control([this.numbers.length + 1], [Validators.required, Validators.min(1)]));
+    this.dates.push(this.fb.control(new Date(), [Validators.required, CustomValidators.minDate('2021-03-01')]));
+    this.themes.push(this.fb.control('', Validators.required));
+    this.homeworks.push(this.fb.control('', Validators.required));
+    this.notes.push(this.fb.control('', Validators.required));
+    this.add.emit([new Date(), '']);
   }
 
   changeField(type, i: number, value) {

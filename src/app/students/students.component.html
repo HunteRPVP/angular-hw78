@@ -1,23 +1,31 @@
 <form [formGroup]="studentForm">
-    <table>
-        <tr>
-            <th>ФИО ученика</th>
-            <th>Действие</th>
-        </tr>
+  <table>
+    <tr>
+      <th>ФИО ученика</th>
+      <th>Действие</th>
+    </tr>
 
-        <tr *ngFor="let student of students.controls; let i=index;">
-            <td formArrayName="students">
-                <input type="text" [formControlName] = "i" (change)="changeEmit(i)" >
-            </td>
-            <td> <button type="button" (click)="deleteStudent(i)">Удалить запись</button> </td>
-        </tr>
-        <tr>
-            <td><input #fio type="text"></td>
-            <td>
-                <button type="button" 
-                    (click) = "addStudent(fio.value); fio.value = '';">Добавить запись</button>
-            </td>
-        </tr>
-
-    </table>
+    <tr *ngFor="let student of students.controls; let i = index">
+      <td formArrayName="students">
+        <input type="text" [formControlName]="i" (change)="changeEmit(i)" />
+        <img
+          *ngIf="students.controls[i].getError('required')"
+          src="../../assets/x-mark-16.png"
+        />
+        <img
+          *ngIf="!students.controls[i].getError('required')"
+          src="../../assets/checkmark-16.png"
+        />
+      </td>
+      <td>
+        <button type="button" (click)="deleteStudent(i)">Удалить запись</button>
+      </td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>
+        <button type="button" (click)="addStudent()">Добавить запись</button>
+      </td>
+    </tr>
+  </table>
 </form>

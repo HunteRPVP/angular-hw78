@@ -1,52 +1,101 @@
 <form [formGroup]="lessonForm">
-    <table>
-        <tr>
-            <th>Номер</th>
-            <th>Дата урока</th>
-            <th>Тема урока</th>
-            <th>Домашнее задание</th>
-            <th>Примечание</th>
-            <th>Действие</th>
-        </tr>
+  <table>
+    <tr>
+      <th>Номер</th>
+      <th>Дата урока</th>
+      <th>Тема урока</th>
+      <th>Домашнее задание</th>
+      <th>Примечание</th>
+      <th>Действие</th>
+    </tr>
 
-        <tr *ngFor="let number of numbers.controls; let i=index;">
-            <td>
-                {{ number.value }}
-            </td>
-            <td>
-                <input #dateExist type="date" name="date" value = "{{ dates.get(i.toString()).value | date: 'yyyy-MM-dd'}}" (change) = "changeField(dateExist.name, i, dateExist.value)">
-            </td>
-            <td formArrayName="themes">
-                <input #themeExist type="text" name="theme" [formControlName] = "i" class = "big" (change) = "changeField(themeExist.name, i, themeExist.value)">
-            </td>
-            <td formArrayName="homeworks">
-                <input type="text" name="hw" [formControlName] = "i" class = "big">
-            </td>
-            <td formArrayName="notes">
-                <input type="text" name="note" [formControlName] = "i" class = "big">
-            </td>
-            <td> <button type="button" (click)="deleteLesson(i)">Удалить запись</button> </td>
-        </tr>
-        <tr>
-            <td></td>
-            <td><input #date type="date"></td>
-            <td><input #theme type="text" class = "big"></td>
-            <td><input #hw type="text" class = "big"></td>
-            <td><input #note type="text" class = "big">
-            </td>
-            <td>
-                <button type="button" 
-                    (click) = "addLesson(
-                    date.value,
-                    theme.value,
-                    hw.value,
-                    note.value);
-                    date.value = '';
-                    theme.value = '';
-                    hw.value = '';
-                    note.value = '';">Добавить запись</button>
-            </td>
-        </tr>
-
-    </table>
+    <tr *ngFor="let number of numbers.controls; let i = index">
+      <td formArrayName="numbers">
+        <input type="text" [formControlName]="i" />
+        <img
+          *ngIf="number.getError('min') || number.getError('required')"
+          src="../../assets/x-mark-16.png"
+        />
+        <img
+          *ngIf="!number.getError('min') && !number.getError('required')"
+          src="../../assets/checkmark-16.png"
+        />
+      </td>
+      <td>
+        <input
+          #dateExist
+          type="date"
+          name="date"
+          value="{{ dates.get(i.toString()).value | date: 'yyyy-MM-dd' }}"
+          (change)="changeField(dateExist.name, i, dateExist.value)"
+        />
+        <img
+          *ngIf="dates.controls[i].getError('required') || dates.controls[i].getError('minDate')"
+          src="../../assets/x-mark-16.png"
+        />
+        <img
+          *ngIf="!dates.controls[i].getError('required') && !dates.controls[i].getError('minDate')"
+          src="../../assets/checkmark-16.png"
+        />
+      </td>
+      <td formArrayName="themes">
+        <input
+          #themeExist
+          type="text"
+          name="theme"
+          [formControlName]="i"
+          class="big"
+          (change)="changeField(themeExist.name, i, themeExist.value)"
+        />
+        <img
+          *ngIf="themes.controls[i].getError('required')"
+          src="../../assets/x-mark-16.png"
+        />
+        <img
+          *ngIf="!themes.controls[i].getError('required')"
+          src="../../assets/checkmark-16.png"
+        />
+      </td>
+      <td formArrayName="homeworks">
+        <input type="text" name="hw" [formControlName]="i" class="big" />
+        <img
+          *ngIf="homeworks.controls[i].getError('required')"
+          src="../../assets/x-mark-16.png"
+        />
+        <img
+          *ngIf="!homeworks.controls[i].getError('required')"
+          src="../../assets/checkmark-16.png"
+        />
+      </td>
+      <td formArrayName="notes">
+        <input type="text" name="note" [formControlName]="i" class="big" />
+        <img
+          *ngIf="notes.controls[i].getError('required')"
+          src="../../assets/x-mark-16.png"
+        />
+        <img
+          *ngIf="!notes.controls[i].getError('required')"
+          src="../../assets/checkmark-16.png"
+        />
+      </td>
+      <td>
+        <button type="button" (click)="deleteLesson(i)">Удалить запись</button>
+      </td>
+    </tr>
+    <tr>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td>
+        <button
+          type="button"
+          (click)=" addLesson();"
+        >
+          Добавить запись
+        </button>
+      </td>
+    </tr>
+  </table>
 </form>

@@ -1,5 +1,5 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import * as ratings from '../../assets/ratings.json';
 
@@ -31,6 +31,10 @@ export class StudentsComponent implements OnInit {
     this.studentForm = fb.group({ 
       students: fb.array(this.fioArray)
     });
+
+    for (var i = 0; i < ratings.students.length; i++) {
+      this.students.controls[i].setValidators([Validators.required]);
+    }
   }
 
   ngOnInit(): void {
@@ -45,9 +49,9 @@ export class StudentsComponent implements OnInit {
     this.delete.emit(i);
   }
 
-  addStudent(fio: string): void {
-    this.students.push(this.fb.control([fio]));
-    this.add.emit(fio);
+  addStudent(): void {
+    this.students.push(this.fb.control('', Validators.required));
+    this.add.emit('');
   }
 
   changeEmit(i: number) {

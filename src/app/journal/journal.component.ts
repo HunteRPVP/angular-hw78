@@ -88,7 +88,6 @@ export class JournalComponent implements OnInit, OnChanges {
         }
       ));
       for (var i = 0; i < this.ratings.controls[0].value.ratings.length; i++) {
-        console.log(this.ratings.controls);
         this.ratings.controls[this.ratings.controls.length - 1].value.ratings.push( 
           {
             "lesson_num": i + 1,
@@ -101,7 +100,6 @@ export class JournalComponent implements OnInit, OnChanges {
       this.addFIO = undefined;
     }
     else if (this.addLessonArr != undefined) {
-      console.log(this.lessonNumbers.controls.length);
       this.lessonNumbers.push(this.fb.control(this.lessonNumbers.controls.length + 1));
       this.lessonDates.push(this.fb.control(this.addLessonArr[0]));
       this.lessonThemes.push(this.fb.control(this.addLessonArr[1]));
