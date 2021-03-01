@@ -21,12 +21,12 @@
           src="../../assets/checkmark-16.png"
         />
       </td>
-      <td>
+      <td formArrayName="dates">
         <input
           #dateExist
           type="date"
           name="date"
-          value="{{ dates.get(i.toString()).value | date: 'yyyy-MM-dd' }}"
+          [formControlName]="i"
           (change)="changeField(dateExist.name, i, dateExist.value)"
         />
         <img

@@ -1,5 +1,6 @@
+import { DatePipe } from '@angular/common';
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { AbstractControl, FormArray, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CustomValidators } from 'ng2-validation';
 
 import * as lessons from '../../assets/lessons.json';
@@ -7,7 +8,8 @@ import * as lessons from '../../assets/lessons.json';
 @Component({
   selector: 'app-lessons',
   templateUrl: './lessons.component.html',
-  styleUrls: ['./lessons.component.css']
+  styleUrls: ['./lessons.component.css'],
+  providers: [DatePipe]
 })
 export class LessonsComponent implements OnInit {
 
@@ -30,11 +32,11 @@ export class LessonsComponent implements OnInit {
   homeworkArr: string[] = [];
   noteArr: string[] = [];
 
-  constructor(private fb: FormBuilder) { 
+  constructor(private fb: FormBuilder, private datePipe: DatePipe) { 
 
     for (var i = 0; i < lessons.lessons.length; i++) {
       this.numberArr.push(lessons.lessons[i].number);
-      this.dateArr.push(new Date (lessons.lessons[i].date).toString());
+      this.dateArr.push(lessons.lessons[i].date);
       this.themeArr.push(lessons.lessons[i].theme);
       this.homeworkArr.push(lessons.lessons[i].homework);
       this.noteArr.push(lessons.lessons[i].note);
@@ -50,7 +52,7 @@ export class LessonsComponent implements OnInit {
 
     for (var i = 0; i < lessons.lessons.length; i++) {
       this.numbers.controls[i].setValidators([Validators.required, Validators.min(1)]);
-      this.dates.controls[i].setValidators(Validators.required);
+      this.dates.controls[i].setValidators([Validators.required]);
       this.themes.controls[i].setValidators(Validators.required);
       this.homeworks.controls[i].setValidators(Validators.required);
       this.notes.controls[i].setValidators(Validators.required);
@@ -93,7 +95,7 @@ export class LessonsComponent implements OnInit {
 
   addLesson(): void {
     this.numbers.push(this.fb.control([this.numbers.length + 1], [Validators.required, Validators.min(1)]));
-    this.dates.push(this.fb.control(new Date(), [Validators.required, CustomValidators.minDate('2021-03-01')]));
+    this.dates.push(this.fb.control(this.datePipe.transform(new Date(), 'yyyy-MM-dd'), [Validators.required, CustomValidators.minDate(this.datePipe.transform(new Date(), 'yyyy-MM-dd'))]));
     this.themes.push(this.fb.control('', Validators.required));
     this.homeworks.push(this.fb.control('', Validators.required));
     this.notes.push(this.fb.control('', Validators.required));
