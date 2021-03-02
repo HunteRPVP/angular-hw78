@@ -7,3 +7,8 @@ table, tr, th, td {
 .big {
     width: 350px;
 }
+  
+span.ng-invalid  {
+    color: red;
+    font-weight: bold;
+}

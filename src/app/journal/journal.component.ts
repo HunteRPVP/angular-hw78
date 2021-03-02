@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnInit, Output } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ɵEmptyOutletComponent } from '@angular/router';
 
 import * as lessons from '../../assets/lessons.json';
@@ -40,6 +40,7 @@ export class JournalComponent implements OnInit, OnChanges {
   lessonDatesArr: Date[] = [];
   lessonThemesArr: string[] = [];
   avgRoundArr: number[] = [];
+  avgRoundToTenthArr: number[] = [];
   avgRoundIntArr: number[] = [];
 
   constructor(private fb: FormBuilder) {
@@ -49,6 +50,7 @@ export class JournalComponent implements OnInit, OnChanges {
       this.lessonDatesArr.push(new Date(lessons.lessons[i].date));
       this.lessonThemesArr.push(lessons.lessons[i].theme);
       this.avgRoundArr.push(this.AvgRound(i));
+      this.avgRoundToTenthArr.push(this.AvgRoundToTenth(i));
       this.avgRoundIntArr.push(this.AvgRoundInt(i));
     }
 
@@ -59,8 +61,15 @@ export class JournalComponent implements OnInit, OnChanges {
       lessonThemes: fb.array(this.lessonThemesArr),
       ratings: fb.array(ratings.students),
       avgRounds: fb.array(this.avgRoundArr),
+      avgRoundToTenths: fb.array(this.avgRoundToTenthArr),
       avgRoundInts: fb.array(this.avgRoundIntArr)
     });
+
+    for (var i = 0; i < ratings.students.length; i++) {
+      this.avgRoundToTenths.controls[i].setValidators(Validators.min(3));
+    }
+
+    console.log(this.avgRoundToTenths);
   }
 
   ngOnInit(): void {
@@ -71,6 +80,7 @@ export class JournalComponent implements OnInit, OnChanges {
       this.fios.removeAt(this.deleteIndex);
       this.ratings.removeAt(this.deleteIndex);
       this.avgRounds.removeAt(this.deleteIndex);
+      this.avgRoundToTenths.removeAt(this.deleteIndex);
       this.avgRoundInts.removeAt(this.deleteIndex);
       this.deleteIndex = undefined;
       this.delete.emit();
@@ -96,6 +106,7 @@ export class JournalComponent implements OnInit, OnChanges {
         );
       }
       this.avgRounds.push(this.fb.control(this.AvgRound(i)));
+      this.avgRoundToTenths.push(this.fb.control(this.AvgRound(i)));
       this.avgRoundInts.push(this.fb.control(this.AvgRoundInt(i)));
       this.addFIO = undefined;
     }
@@ -111,6 +122,7 @@ export class JournalComponent implements OnInit, OnChanges {
           } 
         );
         this.avgRounds.value[i] = this.AvgRound(i);
+        this.avgRoundToTenths.value[i] = this.AvgRoundToTenth(i);
         this.avgRoundInts.value[i] = this.AvgRoundInt(i);
       }
       this.addLessonArr = undefined;
@@ -122,6 +134,7 @@ export class JournalComponent implements OnInit, OnChanges {
       for (var i = 0; i < this.ratings.controls.length; i++) {
         this.ratings.controls[i].value.ratings.splice(this.deleteLessonIndex, 1);
         this.avgRounds.value[i] = this.AvgRound(i);
+        this.avgRoundToTenths.value[i] = this.AvgRoundToTenth(i);
         this.avgRoundInts.value[i] = this.AvgRoundInt(i);
       }
       this.deleteLessonIndex = undefined;
@@ -152,6 +165,21 @@ export class JournalComponent implements OnInit, OnChanges {
     return Math.round((ratingsTemp.reduce((a,b) => a + b, 0) / ratingsTemp.length) * 100) / 100;
   }
 
+  AvgRoundToTenth(index: number): number {
+    var ratingsTemp = [];
+    if ( this.journalForm == undefined ) {
+      for (var i = 0; i < ratings.students[index].ratings.length; i++) {
+        ratingsTemp.push(ratings.students[index].ratings[i].rating);
+      }
+    }
+    else {
+      for (var i = 0; i < this.ratings.controls[index].value.ratings.length; i++) {
+        ratingsTemp.push(this.ratings.controls[index].value.ratings[i].rating);
+      }
+    }
+    return Math.round((ratingsTemp.reduce((a,b) => a + b, 0) / ratingsTemp.length) * 10) / 10;
+  }
+
   AvgRoundInt(index: number): number {
     var ratingsTemp = [];
     if ( this.journalForm == undefined ) {
@@ -170,6 +198,7 @@ export class JournalComponent implements OnInit, OnChanges {
   changeRating(i: number, j: number, changedRating: string): void {
     this.ratings.controls[i].value.ratings[j].rating = parseInt(changedRating);
     this.avgRounds.value[i] = this.AvgRound(i);
+    this.avgRoundToTenths.value[i] = this.AvgRoundToTenth(i);
     this.avgRoundInts.value[i] = this.AvgRoundInt(i);
   }
 
@@ -194,6 +223,10 @@ export class JournalComponent implements OnInit, OnChanges {
   }
 
   get avgRounds(): FormArray {
+    return this.journalForm.get('avgRounds') as FormArray;
+  }
+
+  get avgRoundToTenths(): FormArray {
     return this.journalForm.get('avgRounds') as FormArray;
   }
 
